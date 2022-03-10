@@ -1,0 +1,42 @@
+Compression is used just about everywhere. All the images you get on the web are compressed,
+typically in the JPEG or GIF formats, most modems use compression, HDTV will be compressed
+using MPEG-2, and several file systems automatically compress files when stored, and the rest
+of us do it by hand. The neat thing about compression, as with the other topics we will cover in
+this course, is that the algorithms used in the real world make heavy use of a wide set of algo-
+rithmic tools, including sorting, hash tables, tries, and FFTs. Furthermore, algorithms with strong
+theoretical foundations play a critical role in real-world applications.
+In this chapter we will use the generic term message for the objects we want to compress,
+which could be either files or messages. The task of compression consists of two components, an
+encoding algorithm that takes a message and generates a “compressed” representation (hopefully
+with fewer bits), and a decoding algorithm that reconstructs the original message or some approx-
+imation of it from the compressed representation. These two components are typically intricately
+tied together since they both have to understand the shared compressed representation.
+We distinguish between lossless algorithms, which can reconstruct the original message exactly
+from the compressed message, and lossy algorithms, which can only reconstruct an approximation
+of the original message. Lossless algorithms are typically used for text, and lossy for images and
+sound where a little bit of loss in resolution is often undetectable, or at least acceptable. Lossy is
+used in an abstract sense, however, and does not mean random lost pixels, but instead means loss
+of a quantity such as a frequency component, or perhaps loss of noise. For example, one might
+think that lossy text compression would be unacceptable because they are imagining missing or
+switched characters. Consider instead a system that reworded sentences into a more standard
+form, or replaced words with synonyms so that the file can be better compressed. Technically
+the compression would be lossy since the text has changed, but the “meaning” and clarity of the
+message might be fully maintained, or even improved. In fact Strunk and White might argue that
+good writing is the art of lossy text compression.
+Is there a lossless algorithm that can compress all messages? There has been at least one
+patent application that claimed to be able to compress all files (messages)—Patent 5,533,051 titled
+“Methods for Data Compression”. The patent application claimed that if it was applied recursively,
+a file could be reduced to almost nothing. With a little thought you should convince yourself that
+this is not possible, at least if the source messages can contain any bit-sequence. We can see this
+by a simple counting argument. Lets consider all 1000 bit messages, as an example. There are different messages we can
+send, each which needs to be distinctly identified by the decoder.
+It should be clear we can’t represent that many different messages by sending 999 or fewer bits for
+all the messages — 999 bits would only allow us to send distinct messages. The truth is that
+if any one message is shortened by an algorithm, then some other message needs to be lengthened.
+You can verify this in practice by running GZIP on a GIF file. It is, in fact, possible to go further
+and show that for a set of input messages of fixed length, if one message is compressed, then the
+average length of the compressed messages over all possible inputs is always going to be longer
+than the original input messages. Consider, for example, the 8 possible 3 bit messages. If one is
+compressed to two bits, it is not hard to convince yourself that two messages will have to expand
+to 4 bits, giving an average of 3 1/8 bits. Unfortunately, the patent was granted.
+Because one can’t hope to compress everything, all compression algorithms must assume that

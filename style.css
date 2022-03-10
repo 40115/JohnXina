@@ -1,0 +1,12 @@
+#Main{
+
+    text-align: center;
+}
+#Title{
+   font-size: 100px;
+}
+#Result_Mi{
+    border:black solid 1ch;
+margin-left: 600px;
+    margin-right: 600px;
+}
