@@ -14,7 +14,7 @@ function hello(){
             let result = e.target.result;
             switch (document.getElementById('myfile').files[0].type){
                 case 'text/plain':
-                   let n= f(result,[0,255]);
+                   let n= f(result,[0,255],7,6,3);
 
                     break;
 
@@ -36,49 +36,19 @@ function hello(){
 
 }
 
-function f(result,ran) {
-    let j = new Dictionary([], [ran[0],ran[1]]);
-  //  result=['0','0','0','0','0','1','0','0','0'];
-    let array_file=[];
+function f(result,ran,nDic,nLookup,min) {
+    let j = new Dictionary([], [],nDic,nLookup,min);
+    result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0'];
+    j.Incial_Lookup(result);
+    for (let i = 0; i <result.length ; i++) {
 
-    for (let i = 0; i <result.length-1 ; i++) {
-   let k= j.check([result[i],result[i+1]]);
-   if(k===false){
-       j.create_Node([result[i],result[i+1]]);
-       array_file.push(result[i]);
-   }else {
-       let m=[result[i],result[i+1]];
-       let ax=k.key;
-       for (let l = i+2; l <result.length ; l++) {
-           let k1=m.concat(result[l]);
-           let n=j.check(k1 );
 
-        if(n===false){
-            array_file.push(ax);
-            j.create_Node(k1);
-            i=l-1;
-            break;
-        }else {
-            ax=n.key;
-            m=k1;
-        }
-       }
-     if(i===result.length-2){
-         let k1=m.concat(result[i+1]);
-         let n=j.check(k1);
-         if(k1!==null){
-     array_file.push(n.key);}else{
-             array_file.push(ax,result[i+1]);
-         }
-     break;
-     }
 
-   }
+
     }
 
 console.log(j );
-    console.log( array_file);
-    return array_file;
+return j;
 }
 
 
@@ -102,65 +72,54 @@ function file_write(result,ran) {
 }
 
 class Dictionary {
-    _array_Node=[] ;
-    _range=[];
+    Dic_ = [];
+    Look_Up = [];
+    nDic;
+    nLook;
+    Min_;
 
-
-    constructor(array_Node, range) {
-        this._array_Node = array_Node;
-        this._range = range;
+    constructor(dic_, look_Up, nDic, nLook, min) {
+        this.Dic_ = dic_;
+        this.Look_Up = look_Up;
+        this.nDic = nDic;
+        this.nLook = nLook;
+        this.Min_ = min;
     }
-   check(g){
-       for (let i = 0; i <this._array_Node.length ; i++) {
-           let l=this._array_Node[i];
-            let j;
-           if(g.length===l.Pat.Patter_List.length) {
-               for (j = 0; j < l.Pat.Patter_List.length; j++) {
 
-                   if (g[j] !== l.Pat.Patter_List[j]) {
-                       break;
-                   }
-
-               }
-               if (j === l.Pat.Patter_List.length) {
-                   return this._array_Node[i];
-               }
-           }
-
-       }
-       return false;
-
-   }
-    check_key(key){
-        for (let i = 0; i <this._array_Node.length ; i++) {
-            let l=this._array_Node[i];
-            if(l.key===key){
-                return l;
+    Incial_Lookup(result) {
+        if (this.nLook.length === 0) {
+            for (let i = 0; i < this.Look_Up; i++) {
+                this.Look_Up[i] = result[i];
             }
 
         }
-        return false;
+    }
+
+    Does_Dic_Look() {
+        for (let i =this.nDic- this.Dic_.length; i < this.Look_Up.length; i++) {
+                  if (this.Dic_[i]===this.Look_Up[i]){
+                      for (let j = i+1; j <this.nLook+this.nDic ; j++) {
+                          if(this.nDic>j){
+
+                          }
+                      }
+                      break;
+                  }
+
+        }
+
 
     }
-   create_Node(g){
-        let k=new Pattern(g);
-        let j=new Node_Dic(this._range[1]+this._array_Node.length+1,k);
-        this._array_Node.push(j);
-
-   }
 }
 class Node_Dic{
-    key;
-    Pat=Pattern;
-    constructor(key, Pat) {
-        this.key = key;
-        this.Pat = Pat;
-    }
-}
-class Pattern{
+    OffSet;
+    Lengh;
+    Next_Char;
 
-    Patter_List=[];
-    constructor(Patter_List) {
-        this.Patter_List = Patter_List;
+    constructor(offset,lengh,next_char) {
+       this.Lengh=lengh;
+       this.Next_Char=next_char;
+       this.OffSet=offset;
+
     }
 }
