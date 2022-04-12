@@ -1,4 +1,3 @@
-import * as fs from "fs";
 
 function hello(){
 
@@ -14,7 +13,7 @@ function hello(){
             let result = e.target.result;
             switch (document.getElementById('myfile').files[0].type){
                 case 'text/plain':
-                   let n= f(result,[0,255],7,6,3);
+                   let n= f(result,6,6,6);
 
                     break;
 
@@ -36,14 +35,15 @@ function hello(){
 
 }
 
-function f(result,ran,nDic,nLookup,min) {
-    let j = new Dictionary([], [],nDic,nLookup,min);
-    result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0'];
-    j.Incial_Lookup(result);
+function f(result,nDic,nLookup,min) {
+    let j = new Dic([],[],nDic,nLookup,' ',min);
+    result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
+    let file=[];
+
     for (let i = 0; i <result.length ; i++) {
+if (j.Index===' '){
 
-
-
+}
 
     }
 
@@ -71,55 +71,4 @@ function file_write(result,ran) {
 
 }
 
-class Dictionary {
-    Dic_ = [];
-    Look_Up = [];
-    nDic;
-    nLook;
-    Min_;
 
-    constructor(dic_, look_Up, nDic, nLook, min) {
-        this.Dic_ = dic_;
-        this.Look_Up = look_Up;
-        this.nDic = nDic;
-        this.nLook = nLook;
-        this.Min_ = min;
-    }
-
-    Incial_Lookup(result) {
-        if (this.nLook.length === 0) {
-            for (let i = 0; i < this.Look_Up; i++) {
-                this.Look_Up[i] = result[i];
-            }
-
-        }
-    }
-
-    Does_Dic_Look() {
-        for (let i =this.nDic- this.Dic_.length; i < this.Look_Up.length; i++) {
-                  if (this.Dic_[i]===this.Look_Up[i]){
-                      for (let j = i+1; j <this.nLook+this.nDic ; j++) {
-                          if(this.nDic>j){
-
-                          }
-                      }
-                      break;
-                  }
-
-        }
-
-
-    }
-}
-class Node_Dic{
-    OffSet;
-    Lengh;
-    Next_Char;
-
-    constructor(offset,lengh,next_char) {
-       this.Lengh=lengh;
-       this.Next_Char=next_char;
-       this.OffSet=offset;
-
-    }
-}
