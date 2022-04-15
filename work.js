@@ -42,6 +42,8 @@ function f(result,nDic,nLookup,min) {
     let j = new Dic([],[],nDic,nLookup,' ',min);
     result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
     let file=[];
+    let h=file[0];
+    j.inicial_Dic();
 j.inicial_lookup(result);
     for (let i = 0; i <result.length ; i++) {
 let sa=j.Hash_lookup();
@@ -56,22 +58,28 @@ let sa=j.Hash_lookup();
         }
     }
     if (lengmax>=4){
-        let b=j.Dic_[hash];
-        let x1=b[index];
-        for (let k = 0; k <lengmax ; k++) {
-           file.fill(x1[k]);
-        }
 
+
+           file.push('¨',lengmax,index,hash);
+
+        for (let k = 0; k <lengmax ; k++) {
+
+
+            j.move_Index(result[i + j.nHash+1]);
+            i++;
+        }
     }else {
-        if (j.Index===' '){
+        if (j.Index===undefined){
+            file.push('¨');
             for (let k = 0; k <j.Look_Up.length ; k++) {
-                file.fill(  j.Look_Up[k]);
+                file.push(  j.Look_Up[k]);
             }
             break;
 
         }else{
             j.Place_hash(sa,j.Look_Up);
-            j.move_Index();
+            let b1=j.move_Index(result[i+j.nHash]);
+          file.push( b1 );
         }
 
 
@@ -123,6 +131,19 @@ class Dic {
         this.Index = index;
         this.Hashweight=hashweight;
     }
+    inicial_Dic() {
+        for (let i = 0; i <this.nHash ; i++) {
+            this.Dic_[i]=[];
+            let n=this.Dic_[i];
+            for (let j = 0; j <this.Hashweight ; j++) {
+
+                n[j]=[];
+            }
+        }
+
+    }
+
+
     inicial_lookup(result){
 
         for (let i = 0; i <this.nLook ; i++) {
@@ -135,25 +156,28 @@ class Dic {
         let hasvalue=this.Hash_lookup();
         let arr=[];
         for (let i = hasvalue; i <hasvalue+this.nHash ; i++) {
-            let n=this.Dic_[i];
-            if (n!=null ) {
+            let n=this.Dic_[i%this.nHash];
+
                 for (let j = 0; j < n.length; j++) {
                     let k=n[j];
                     let l;
                     for ( l = 0; l <k.length ; l++) {
                         if (k[l]!== this.Look_Up[l]){
                             arr.push(l,j,i);
+                            break;
                         }
-                        if (l===k.length){
-                            arr.push(k.length,j,i);
-                        }
-
                     }
-
+                    if (l===0){
+                        arr.push(0,j,i);
+                    }else
+                    if (l===k.length){
+                        arr.push(k.length,j,i);
+                    }
                 }
+
             }
 
-        }
+
         return arr;
 
 
@@ -165,24 +189,36 @@ class Dic {
         }
         return soma %this.nHash;
     }
-    move_Index(){
-        for (let i = 0; i <this.Look_Up.length ; i++) {
-            this.Look_Up[this.Look_Up.length-i-2]=this.Look_Up[this.Look_Up.length-i-1];
+    move_Index(nex){
+       let k=[];
+       k.push(this.Look_Up[0]);
 
-        }
-        this.Look_Up[this.nLook-1]=this.Index;
+            for (let j = 1; j < this.Look_Up.length; j++) {
+                this.Look_Up[j - 1] = this.Look_Up[j];
+            }
+            this.Look_Up[this.nHash-1]=this.Index;
+            this.Index=nex;
+
+return k;
 
     }
     Place_hash(hash,array){
-        for (let i = 0; i <this.Dic_[hash].length ; i++) {
+        let l=this.Dic_[hash];
+        for (let i = 0; i <l.length ; i++) {
             let n=this.Dic_[hash];
-            if (n[i]===''){
+            if (n[i].length===0){
+               let n1=[];
+                for (let j = 0; j <this.Look_Up.length ; j++) {
+                    n1.push(array[j]);
+                }
 
-                n[i]=array;
+
+             n[i]=n1;
                 return;
             }
 
         }
+
 
     }
 
