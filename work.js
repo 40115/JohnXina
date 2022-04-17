@@ -1,22 +1,18 @@
 
-
-
 function hello(){
 
     const file = document.getElementById('myfile');
 
-
     if(file.files.length)
     {
         var reader = new FileReader();
-      reader.onload = function(e)
+        reader.onload = function(e)
         {
        //     document.getElementById('Result').innerHTML = e.target.result;
             let result = e.target.result;
             switch (document.getElementById('myfile').files[0].type){
                 case 'text/plain':
-                   let n= f(result,6,6,6);
-
+                    let n= f(result,6,6,6); // Inicialização do HashMap
                     break;
 
 
@@ -44,11 +40,11 @@ function f(result,nDic,nLookup,min) {
     let file=[];
     let h=file[0];
     j.inicial_Dic();
-j.inicial_lookup(result);
+    j.inicial_lookup(result);
     for (let i = 0; i <result.length ; i++) {
-let sa=j.Hash_lookup();
-   let array= j.check_legth();
-   let lengmax=0,index=0,hash=0;
+        let sa=j.Hash_lookup();
+        let array= j.check_legth();
+        let lengmax=0,index=0,hash=0;
 
     for (let k = 0; k <array.length ; k=k+3) {
         if (array[k]>lengmax){
@@ -58,16 +54,12 @@ let sa=j.Hash_lookup();
         }
     }
     if (lengmax>=4){
-
-
+        j.rehash(nDic*2); // Duplicamos o tamanho do Dicionario
            file.push('¨',lengmax,index,hash);
-
-        for (let k = 0; k <lengmax ; k++) {
-
-
-            j.move_Index(result[i + j.nHash+1]);
-            i++;
-        }
+           for (let k = 0; k <lengmax ; k++) {
+               j.move_Index(result[i + j.nHash+1]);
+               i++;
+           }
     }else {
         if (j.Index===undefined){
             file.push('¨');
@@ -75,24 +67,15 @@ let sa=j.Hash_lookup();
                 file.push(  j.Look_Up[k]);
             }
             break;
-
         }else{
             j.Place_hash(sa,j.Look_Up);
             let b1=j.move_Index(result[i+j.nHash]);
           file.push( b1 );
         }
-
-
-
+    }
     }
 
-
-
-
-
-    }
-
-console.log(j );
+console.log(j);
 return j;
 }
 
@@ -115,7 +98,7 @@ function file_write(result,ran) {
     });
 
 }
-
+let n= f(result,6,6,6);
 class Dic {
     Dic_  ;
     Look_Up ;
@@ -126,7 +109,7 @@ class Dic {
     constructor(dic_, look_Up, hash, nLook, index,hashweight) {
         this.Dic_ = dic_;
         this.Look_Up = look_Up;
-        this.nHash = hash;
+        this.nHash = hash; // nDic
         this.nLook = nLook;
         this.Index = index;
         this.Hashweight=hashweight;
@@ -140,9 +123,7 @@ class Dic {
                 n[j]=[];
             }
         }
-
     }
-
 
     inicial_lookup(result){
 
@@ -159,7 +140,7 @@ class Dic {
             let n=this.Dic_[i%this.nHash];
 
                 for (let j = 0; j < n.length; j++) {
-                    let k=n[j];
+                    let k=n[j]; // K tem a capacidade do dicionario
                     let l;
                     for ( l = 0; l <k.length ; l++) {
                         if (k[l]!== this.Look_Up[l]){
@@ -170,17 +151,13 @@ class Dic {
                     if (l===0){
                         arr.push(0,j,i);
                     }else
-                    if (l===k.length){
+                    if (l===k.length){ // O L está no fim do dicionario
                         arr.push(k.length,j,i);
                     }
                 }
 
             }
-
-
         return arr;
-
-
     }
     Hash_lookup(){
         let soma=0;
@@ -198,9 +175,7 @@ class Dic {
             }
             this.Look_Up[this.nHash-1]=this.Index;
             this.Index=nex;
-
-return k;
-
+            return k;
     }
     Place_hash(hash,array){
         let l=this.Dic_[hash];
@@ -211,18 +186,25 @@ return k;
                 for (let j = 0; j <this.Look_Up.length ; j++) {
                     n1.push(array[j]);
                 }
-
-
-             n[i]=n1;
+                n[i]=n1;
                 return;
             }
-
         }
+    }
+    rehash(newCapacity) {
+        const newMap = new HashMap(newCapacity);
 
+        this.keys.forEach(key => {
+            if(key) {
+                newMap.set(key.content, this.get(key.content));
+            }
+        });
 
+        this.Look_Up = newMap.look_Up;
+        this.nHash = newMap.hash; // nDic
+        this.nLook = newMap.nLook;
+        this.Index = newMap.index;
+        this.Hashweight=newMap.hashweight;
     }
 
 }
-
-
-
