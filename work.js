@@ -1,6 +1,5 @@
 
 
-
 function hello(){
 
     const file = document.getElementById('myfile');
@@ -16,7 +15,7 @@ function hello(){
             switch (document.getElementById('myfile').files[0].type){
                 case 'text/plain':
                    let n= f(result,6,6,6);
-
+ file_write(n[0],n[1]);
                     break;
 
 
@@ -42,7 +41,7 @@ function f(result,nDic,nLookup,min) {
     let j = new Dic([],[],nDic,nLookup,' ',min);
     result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
     let file=[];
-    let h=file[0];
+
     j.inicial_Dic();
 j.inicial_lookup(result);
     for (let i = 0; i <result.length ; i++) {
@@ -58,19 +57,14 @@ let sa=j.Hash_lookup();
         }
     }
     if (lengmax>=4){
-
-
            file.push('¨',lengmax,index,hash);
 
         for (let k = 0; k <lengmax ; k++) {
-
-
             j.move_Index(result[i + j.nHash+1]);
             i++;
         }
     }else {
         if (j.Index===undefined){
-            file.push('¨');
             for (let k = 0; k <j.Look_Up.length ; k++) {
                 file.push(  j.Look_Up[k]);
             }
@@ -87,32 +81,16 @@ let sa=j.Hash_lookup();
     }
 
 
-
-
-
     }
 
-console.log(j );
-return j;
+return [file,j];
 }
 
 
-function file_write(result,ran) {
-    let foo = "71%73%70%56%57%97%50%0%50%0%247%0%0%150%140%115%102%94%69%198%187%159%123%114%90%71%71%71%138%129%101%202%193%166%201%193%172%238%234%221%200%197%188%140$";
-    let bytes = foo.split("%");
+function file_write(result,j) {
+    var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "hello world.txt");
 
-    let b = new Buffer(bytes.length);
-    for (let i = 0; i < bytes.length; i++) {
-        b[i] = bytes[i];
-    }
-
-    fs.writeFile("test.txt", b,  "binary",function(err) {
-        if(err) {
-            console.log(err);
-        } else {
-            console.log("The file was saved!");
-        }
-    });
 
 }
 
@@ -206,6 +184,10 @@ return k;
         let l=this.Dic_[hash];
         for (let i = 0; i <l.length ; i++) {
             let n=this.Dic_[hash];
+            if (n[this.Hashweight-1].length!==0){
+                this.rehash(this.Hashweight*2);
+
+            }
             if (n[i].length===0){
                let n1=[];
                 for (let j = 0; j <this.Look_Up.length ; j++) {
@@ -220,6 +202,18 @@ return k;
         }
 
 
+    }
+    rehash(newCapacity) {
+        if (this.nHash>=newCapacity){
+            return;
+        }
+        for (let i = 0; i <this.nHash ; i++) {
+            let v=this.Dic_[i];
+            for (let j = this.nHash; j <newCapacity ; j++) {
+                v.push([]);
+            }
+        }
+this.Hashweight=newCapacity;
     }
 
 }
