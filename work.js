@@ -16,6 +16,7 @@ function hello(){
                 case 'text/plain':
                    let n= f(result,6,6,6);
  file_write(n[0],n[1]);
+
                     break;
 
 
@@ -88,6 +89,14 @@ return [file,j];
 
 
 function file_write(result,j) {
+
+    let array=[];
+    let array2=[];
+    for (let i = 0; i <result.length ; i++) {
+
+
+    }
+    let hello = new Uint8Array([72, 101, 108, 108, 111]);
     var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "hello world.txt");
 
