@@ -46,43 +46,37 @@ function f(result,nDic,nLookup,min) {
     j.inicial_Dic();
 j.inicial_lookup(result);
     for (let i = 0; i <result.length ; i++) {
-let sa=j.Hash_lookup();
-   let array= j.check_legth();
-   let lengmax=0,index=0,hash=0;
-
-    for (let k = 0; k <array.length ; k=k+3) {
-        if (array[k]>lengmax){
-            lengmax=array[k];
-            index=array[k+1];
-            hash=array[k+2];
-        }
-    }
-    if (lengmax>=4){
-           file.push('¨',lengmax,index,hash);
-
-        for (let k = 0; k <lengmax ; k++) {
-            j.move_Index(result[i + j.nHash+1]);
-            i++;
-        }
-    }else {
         if (j.Index===undefined){
-            for (let k = 0; k <j.Look_Up.length ; k++) {
+            for (let k = 0; k <j.Look_Up.length && j.Look_Up[k]!==undefined ; k++) {
                 file.push(  j.Look_Up[k]);
             }
             break;
-
-        }else{
-            j.Place_hash(sa,j.Look_Up);
-            let b1=j.move_Index(result[i+j.nHash]);
-          file.push( b1 );
         }
+let sa=j.Hash_lookup();
+   let array= j.check_legth(sa);
+   let lengmax=0,index=0,hash=0;
 
 
+            lengmax=array[0];
+            index=array[1];
+            hash=array[2];
+
+    if (lengmax>=3){
+           file.push('¨',lengmax,index,hash);
+            j.move_Index(result,i,lengmax);
+            i=i+lengmax-1;
+
+
+    }else {
+
+            j.Place_hash(sa,j.Look_Up);
+          file.push( j.move_Index(result,i,1));
 
     }
 
 
     }
+
 
 return [file,j];
 }
@@ -92,12 +86,69 @@ function file_write(result,j) {
 
     let array=[];
     let array2=[];
+
     for (let i = 0; i <result.length ; i++) {
+if (array2.length===0 && result[i]==='¨'){
+    let hash=result[i+3];
+    let b=ABC.toBinary(hash,0);
+    const chars = b.split('');
+    let offset=chars[7];
+    hash=hash>>1;
+    let k=128+hash;
+    array.push(k);
+array2.push(offset);
 
+        for (let k = i+3; k <result.length-1 ; k++) {
+            result[k]=result[k+1];
+        }
+        result.pop();
 
+}else{
+    let hash = 0;
+    let boo=false;
+    if (result[i]==='¨') {
+        hash = result[i + 3];
+        boo=true;
+    }else{
+        hash=result[i];
     }
-    let hello = new Uint8Array([72, 101, 108, 108, 111]);
-    var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+        let b=ABC.toBinary(hash,0);
+        const chars = b.split('');
+        let num=0;
+        for (let k = 0; k <array2.length ; k++) {
+            if (array2[k]!=='0') {
+                num += Math.pow(2,7 -k);
+            }
+        }
+        for (let k = 0 ; k<chars.length-array2.length; k++) {
+            if (chars[k]!=='0') {
+                num += Math.pow(2,7 - k-array2.length);
+            }
+
+        }
+      let size=array2.length;
+        array2.length=0;
+        for (let k = chars.length-size-1; k <chars.length ; k++) {
+            array2.push(chars[k]);
+        }
+        array.push(num);
+        if (array2.length===8){
+            for (let k = 8-array2.length; k >0; k++) {
+                array2.push(chars[k]);
+            }
+        }
+        if (boo){
+            for (let k = i+3; k <result.length-1 ; k++) {
+                result[k]=result[k+1];
+            }
+            result.pop();
+        }
+
+
+}
+    }
+    let hello = new Uint8Array(array);
+    var blob = new Blob([hello], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "hello world.txt");
 
 
@@ -139,26 +190,27 @@ class Dic {
         this.Index=result[this.nLook];
     }
 
-    check_legth(){
-        let hasvalue=this.Hash_lookup();
+    check_legth(hasvalue){
+
         let arr=[];
+        arr.push(0);
         for (let i = hasvalue; i <hasvalue+this.nHash ; i++) {
             let n=this.Dic_[i%this.nHash];
 
                 for (let j = 0; j < n.length; j++) {
                     let k=n[j];
-                    let l;
+                    let l=0;
                     for ( l = 0; l <k.length ; l++) {
-                        if (k[l]!== this.Look_Up[l]){
-                            arr.push(l,j,i);
+                        let aux =k[l];
+                        let aux2=this.Look_Up[l];
+                        if (aux!==aux2 ){
                             break;
                         }
                     }
-                    if (l===0){
-                        arr.push(0,j,i);
-                    }else
-                    if (l===k.length){
-                        arr.push(k.length,j,i);
+
+                    if (l===this.Hashweight ||(l>arr[0])) {
+                        arr.length = 0;
+                        arr.push(l, j, i%this.nHash );
                     }
                 }
 
@@ -176,18 +228,15 @@ class Dic {
         }
         return soma %this.nHash;
     }
-    move_Index(nex){
-       let k=[];
-       k.push(this.Look_Up[0]);
+    move_Index(nex,i,len){
+        let n=this.Look_Up[0];
+        let j;
+        for (j = 0; j <this.nLook ; j++) {
+            this.Look_Up[j]=nex[i+len+j];
 
-            for (let j = 1; j < this.Look_Up.length; j++) {
-                this.Look_Up[j - 1] = this.Look_Up[j];
-            }
-            this.Look_Up[this.nHash-1]=this.Index;
-            this.Index=nex;
-
-return k;
-
+        }
+        this.Index=nex[i+len+j];
+        return n;
     }
     Place_hash(hash,array){
         let l=this.Dic_[hash];
