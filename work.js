@@ -29,7 +29,35 @@ function hello(){
      reader.readAsBinaryString(file.files[0]);
 
     }else {
-        document.getElementById('Result').innerHTML=" <div id='Result_Mi'> File Required</div>";
+        const file2 = document.getElementById('myfile2');
+        const file3 = document.getElementById('myfile3');
+
+        if(file2.files.length&&file3.files.length)
+        {
+            var reader2 = new FileReader();
+            var reader3 = new FileReader();
+            reader2.onload = function(e) {
+                reader3.onload = function (e) {
+                    //     document.getElementById('Result').innerHTML = e.target.result;
+                    let result2 = e.target.result;
+                    switch (document.getElementById('myfile2').files[0].type) {
+                        case 'text/plain':
+
+                            break;
+
+
+                        default:
+                            document.getElementById('Result').innerHTML = " <div id='Result_Mi'> File Not Supported</div>";
+                            break
+                    }
+                };
+            };
+          reader2.readAsBinaryString(file.files[0]);
+
+
+        }else {
+            document.getElementById('Result').innerHTML = " <div id='Result_Mi'> File Required</div>";
+        }
     }
 
 
@@ -40,7 +68,7 @@ function hello(){
 function f(result,nDic,nLookup,min) {
 
     let j = new Dic([],[],nDic,nLookup,' ',min);
-    result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
+   // result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
     let file=[];
 
     j.inicial_Dic();
@@ -62,7 +90,7 @@ let sa=j.Hash_lookup();
             hash=array[2];
 
     if (lengmax>=3){
-           file.push('¨',lengmax,index,hash);
+           file.push('¨',lengmax.toString(),index.toString(),hash.toString());
             j.move_Index(result,i,lengmax);
             i=i+lengmax-1;
 
@@ -88,41 +116,30 @@ function file_write(result,j) {
     let array2=[];
 
     for (let i = 0; i <result.length ; i++) {
-if (array2.length===0 && result[i]==='¨'){
-    let hash=result[i+3];
-    let b=ABC.toBinary(hash,0);
-    const chars = b.split('');
-    let offset=chars[7];
-    hash=hash>>1;
-    let k=128+hash;
-    array.push(k);
-array2.push(offset);
 
-        for (let k = i+3; k <result.length-1 ; k++) {
-            result[k]=result[k+1];
-        }
-        result.pop();
-
-}else{
     let hash = 0;
     let boo=false;
+    let num=0;
     if (result[i]==='¨') {
+        num+=128;
         hash = result[i + 3];
         boo=true;
+
     }else{
         hash=result[i];
     }
+
         let b=ABC.toBinary(hash,0);
         const chars = b.split('');
-        let num=0;
+
         for (let k = 0; k <array2.length ; k++) {
             if (array2[k]!=='0') {
-                num += Math.pow(2,7 -k);
+                num += Math.pow(2,7 -k-1);
             }
         }
-        for (let k = 0 ; k<chars.length-array2.length; k++) {
+        for (let k = 0 ; k<chars.length-array2.length-2; k++) {
             if (chars[k]!=='0') {
-                num += Math.pow(2,7 - k-array2.length);
+                num += Math.pow(2,7 - k-array2.length-1);
             }
 
         }
@@ -133,9 +150,10 @@ array2.push(offset);
         }
         array.push(num);
         if (array2.length===8){
-            for (let k = 8-array2.length; k >0; k++) {
+            for (let k =0; k <8; k++) {
                 array2.push(chars[k]);
             }
+            array2.length=0;
         }
         if (boo){
             for (let k = i+3; k <result.length-1 ; k++) {
@@ -145,11 +163,41 @@ array2.push(offset);
         }
 
 
-}
+
     }
+    let num=0;
+    for (let k = 0; k <array2.length ; k++) {
+        if (array2[k]!=='0') {
+            num += Math.pow(2,7 -k-1);
+        }
+    }
+    array.push(num);
+    let array3=[];
+    for (let i = 0; i <j.nHash ; i++) {
+        let ga=j.Dic_[i];
+       array3.push('|');
+        for (let k = 0; k <ga.length ; k++) {
+            let c=ga[i];
+             if (c.length!==0){
+                 for (let l = 0; l <c.length ; l++) {
+                array3.push(c[l]);
+
+                 }
+         array3.push(',');
+             }
+
+        }
+
+
+    }
+
+
     let hello = new Uint8Array(array);
+    let hello2=new Uint8Array(array3);
     var blob = new Blob([hello], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "hello world.txt");
+    var blob2 = new Blob([hello2], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "filecompressed.txt");
+    saveAs(blob2,"Tablecompremidada.txt");
 
 
 }
@@ -162,12 +210,12 @@ class Dic {
     Index;
     Hashweight;
     constructor(dic_, look_Up, hash, nLook, index,hashweight) {
-        this.Dic_ = dic_;
-        this.Look_Up = look_Up;
-        this.nHash = hash;
-        this.nLook = nLook;
-        this.Index = index;
-        this.Hashweight=hashweight;
+        this.Dic_ = dic_;//Dicionario conteudo
+        this.Look_Up = look_Up;//Window conteudo
+        this.nHash = hash;//Numero de hash que existem no dicionarios
+        this.nLook = nLook;//Numero de posiçoes que existe no Window Look up
+        this.Index = index;//Index do proximo char na fila
+        this.Hashweight=hashweight;//Hashweight numero de capacidade de cada hash
     }
     inicial_Dic() {
         for (let i = 0; i <this.nHash ; i++) {
@@ -262,7 +310,7 @@ class Dic {
 
     }
     rehash(newCapacity) {
-        if (this.nHash>=newCapacity){
+        if (this.Hashweight>=newCapacity){
             return;
         }
         for (let i = 0; i <this.nHash ; i++) {
