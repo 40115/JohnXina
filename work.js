@@ -7,7 +7,7 @@ function hello(){
 
     if(file.files.length)
     {
-        var reader = new FileReader();
+      let reader = new FileReader();
       reader.onload = function(e)
         {
        //     document.getElementById('Result').innerHTML = e.target.result;
@@ -29,46 +29,51 @@ function hello(){
      reader.readAsBinaryString(file.files[0]);
 
     }else {
-        const file2 = document.getElementById('myfile2');
-        const file3 = document.getElementById('myfile3');
 
-        if(file2.files.length&&file3.files.length)
-        {
-            var reader2 = new FileReader();
-            var reader3 = new FileReader();
-            reader2.onload = function(e) {
-                reader3.onload = function (e) {
-                    //     document.getElementById('Result').innerHTML = e.target.result;
-                    let result2 = e.target.result;
-                    switch (document.getElementById('myfile2').files[0].type) {
-                        case 'text/plain':
-
-                            break;
-
-
-                        default:
-                            document.getElementById('Result').innerHTML = " <div id='Result_Mi'> File Not Supported</div>";
-                            break
-                    }
-                };
-            };
-          reader2.readAsBinaryString(file.files[0]);
-
-
-        }else {
             document.getElementById('Result').innerHTML = " <div id='Result_Mi'> File Required</div>";
         }
+
+}
+
+function hello2(){
+let result=get('myfile2');
+    let result2=get('myfile3');
+console.log(result);
+}
+
+function get(id){
+    const file2 = document.getElementById(id);
+
+
+    if(file2.files.length)
+    {
+        let reader = new FileReader();
+        reader.onload = function(e)
+        {
+            //     document.getElementById('Result').innerHTML = e.target.result;
+            let result = e.target.result;
+            switch (document.getElementById(id).files[0].type){
+                case 'text/plain':
+                    return result;
+                default:
+                    document.getElementById('Result').innerHTML=" <div id='Result_Mi'> File Not Supported</div>";
+                    break
+            }
+        };
+        reader.readAsBinaryString(file2.files[0]);
+
+    }else {
+
+        document.getElementById('Result').innerHTML = " <div id='Result_Mi'> File Required</div>";
+        return null;
     }
-
-
-
 
 }
 
 function f(result,nDic,nLookup,min) {
 
     let j = new Dic([],[],nDic,nLookup,' ',min);
-   // result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
+    result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
     let file=[];
 
     j.inicial_Dic();
@@ -108,6 +113,7 @@ let sa=j.Hash_lookup();
 
 return [file,j];
 }
+
 
 
 function file_write(result,j) {
@@ -190,12 +196,24 @@ function file_write(result,j) {
 
 
     }
+    let array4=[];
+    for (let i = 0; i <array3.length ; i++) {
+        let h=ABC.toBinary(array3[i],0);
+        const chars2 = h.split('');
+        let numb2=0;
+        for (let k = 0; k <chars2.length ; k++) {
+            if (chars2[k]!=='0')
+            numb2 += Math.pow(2,7 -k);
+        }
+        array4.push(numb2);
+    }
 
 
+//new Uint8Array([122,123,123,123,123,124]);
     let hello = new Uint8Array(array);
-    let hello2=new Uint8Array(array3);
-    var blob = new Blob([hello], {type: "text/plain;charset=utf-8"});
-    var blob2 = new Blob([hello2], {type: "text/plain;charset=utf-8"});
+    let hello2=new Uint8Array(array4);
+    const blob = new Blob([hello], {type: "text/plain;charset=utf-8"});
+    const blob2 = new Blob([hello2], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "filecompressed.txt");
     saveAs(blob2,"Tablecompremidada.txt");
 
