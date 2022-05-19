@@ -1,5 +1,4 @@
 
-
 function hello(){
 
     const file = document.getElementById('myfile');
@@ -10,7 +9,6 @@ function hello(){
       let reader = new FileReader();
       reader.onload = function(e)
         {
-       //     document.getElementById('Result').innerHTML = e.target.result;
             let result = e.target.result;
             switch (document.getElementById('myfile').files[0].type){
                 case 'text/plain':
@@ -35,75 +33,158 @@ function hello(){
 
 }
 
+let table = null;
+
 function hello2(){
-let result=get('myfile2');
-    let result2=get('myfile3');
-console.log(result);
-}
 
-function get(id){
-    const file2 = document.getElementById(id);
-
-
-    if(file2.files.length)
+    let filelist = document.getElementById('myfile2').files;
+    for(let i=0; i<filelist.length; i++)
     {
-        let reader = new FileReader();
-        reader.onload = function(e)
-        {
-            //     document.getElementById('Result').innerHTML = e.target.result;
-            let result = e.target.result;
-            switch (document.getElementById(id).files[0].type){
-                case 'text/plain':
-                    return result;
-                default:
-                    document.getElementById('Result').innerHTML=" <div id='Result_Mi'> File Not Supported</div>";
-                    break
-            }
-        };
-        reader.readAsBinaryString(file2.files[0]);
-
-    }else {
-
-        document.getElementById('Result').innerHTML = " <div id='Result_Mi'> File Required</div>";
-        return null;
+        writefiles(filelist[i],i);
     }
 
 }
 
+function writefiles(file,i)
+{
+    let reader = new FileReader();
+    reader.onload = function(e)
+    {
+switch (i){
+    case 0:
+     table=descompresion_table(e.target.result);
+break;
+    case 1:
+descompresion_file(e.target.result);
+}
+
+    }
+    reader.readAsText(file, "UTF-8");
+}
+function descompresion_file(result){
+    if (table==null){
+        return;
+    }
+    let araay=[];
+    for (let i = 0; i <result.length ; i++) {
+
+        let h=ABC.toBinary(result[i],0);
+
+        const chars = h.split('');
+        if (chars.length!==8){
+            let js='11010000';
+            for (let j = 0; j < js.length; j++) {
+                araay.push(js[j]);
+            }
+        }else {
+            for (let j = 0; j < chars.length; j++) {
+                araay.push(chars[j]);
+            }
+        }
+    }
+    let arrr=[];
+    let arr2=[];
+    let num=0;
+    for (let i = 0; i <araay.length ; i++) {
+        if (i%9===0 && i!==0){
+            arrr.push(num);
+            num=0;
+        }
+        if (araay[i]!=='0'){
+            num+=Math.pow(2,8-i%9);
+        }
+    }
+    for (let i = 0; i <arrr.length ; i++) {
+    }
+let n0=0;
+
+}
+function descompresion_table(result){
+    if (result[0]!=='|'){
+        return null;
+    }
+    let ntable=[];
+    let nhash=-1;
+    let nweight=0;
+    let leight=0;
+    for (let i = 0; i <result.length ; i++) {
+       if (result[i]==='|'){
+           ntable.push([]);
+           nhash++;
+       }else {
+           let newhash=[];
+           let th=false;
+           while(result[i]!=='|'){
+               if (result[i]===',' ){
+                   leight=newhash.length;
+                   let h=[];
+                   for (let j = 0; j <leight ; j++) {
+                       h.push(newhash[j]);
+                   }
+                  ntable[nhash].push(h);
+                   newhash.length=0;
+                   th=true;
+               }else {
+                   newhash.push(result[i]);
+               }
+               i++;
+
+           }
+           if (th){
+               i--;
+           }
+
+
+       }
+    }
+return new Dic(ntable,[],ntable.length,0,'-1',leight);
+}
+
+
 function f(result,nDic,nLookup,min) {
 
     let j = new Dic([],[],nDic,nLookup,' ',min);
-    result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
+   //result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
     let file=[];
+    let h=[];
 
     j.inicial_Dic();
+   h.push("<p>Main Dic reserves space for the patterns discorvered</p>");
 j.inicial_lookup(result);
+    h.push("<p>Inicial lookup->"+j.Look_Up+"<br>"+"Inicial Index->"+j.Index+ "<br></p>");
     for (let i = 0; i <result.length ; i++) {
         if (j.Index===undefined){
+            h.push("<p>file compressed put the lookup remaining to the file and finished</p>");
             for (let k = 0; k <j.Look_Up.length && j.Look_Up[k]!==undefined ; k++) {
                 file.push(  j.Look_Up[k]);
             }
             break;
         }
+
 let sa=j.Hash_lookup();
-   let array= j.check_legth(sa);
+        h.push("<p>Hash Numeber calculated:"+sa+"<p>");
+
+        let array= j.check_legth(sa);
    let lengmax=0,index=0,hash=0;
-
-
             lengmax=array[0];
             index=array[1];
             hash=array[2];
 
     if (lengmax>=3){
-           file.push('¨',lengmax.toString(),index.toString(),hash.toString());
+        h.push("<p> Available length decteted for compression:"+lengmax+" Index->"+ index+" Hash->" +hash+"</p>");
+
+        file.push('¨',lengmax.toString(),index.toString(),hash.toString());
             j.move_Index(result,i,lengmax);
             i=i+lengmax-1;
-
+        h.push("<p> Resulting lookup</p>"+j.Look_Up);
 
     }else {
-
+        h.push("<p> Available length Not decteted for compression:"+lengmax+" Index->"+ index+" Hash->" +hash+"</p>");
+        h.push("<p> We need to store the lookup to the hash dictonary</p>");
             j.Place_hash(sa,j.Look_Up);
-          file.push( j.move_Index(result,i,1));
+
+        file.push( j.move_Index(result,i,1));
+        h.push("<p> Resulting lookup</p>"+j.Look_Up);
 
     }
 
@@ -111,19 +192,10 @@ let sa=j.Hash_lookup();
     }
 
 
-return [file,j];
+return [file,j,h];
 }
-
-
-
-function file_write(result,j) {
-
-    let array=[];
-    let array2=[];
-
-    for (let i = 0; i <result.length ; i++) {
-
-    let hash = 0;
+/*
+*    let hash = 0;
     let boo=false;
     let num=0;
     if (result[i]==='¨') {
@@ -167,23 +239,62 @@ function file_write(result,j) {
             }
             result.pop();
         }
-
-
-
-    }
-    let num=0;
-    for (let k = 0; k <array2.length ; k++) {
+        *   for (let k = 0; k <array2.length ; k++) {
         if (array2[k]!=='0') {
             num += Math.pow(2,7 -k-1);
         }
     }
     array.push(num);
+
+*/
+
+
+function file_write(result,j) {
+
+    let array=[];
+    let array2=[];
+    for (let i = 0; i <result.length ; i++) {
+if (result[i]==='¨'){
+array.push('1');
+let h1=result[i+3]-'0';
+    for (let k = 0; k <8 ; k++) {
+      if (h1>=Math.pow(2,7-k)){
+h1-=Math.pow(2,7-k);
+array.push('1');
+h1=h1-Math.pow(2,7-k);
+      }else {
+          array.push('0');
+      }
+    }
+    result.splice(i+3,1);
+}else {
+    array.push('0');
+    let b= ABC.toBinary(result[i],0);
+    const chars = b.split('');
+    for (let k = 0; k <chars.length ; k++) {
+        array.push(chars[k]);
+    }
+}
+    }
+    let num=0;
+    for (let i = 0; i <array.length ; i++) {
+        if (i%8===0 && i!==0){
+     array2.push(num);
+num=0;
+        }
+        if (array[i]!=='0'){
+            num+=Math.pow(2,7-i%8);
+        }
+
+    }
+
+
     let array3=[];
     for (let i = 0; i <j.nHash ; i++) {
         let ga=j.Dic_[i];
        array3.push('|');
         for (let k = 0; k <ga.length ; k++) {
-            let c=ga[i];
+            let c=ga[k];
              if (c.length!==0){
                  for (let l = 0; l <c.length ; l++) {
                 array3.push(c[l]);
@@ -207,17 +318,12 @@ function file_write(result,j) {
         }
         array4.push(numb2);
     }
-
-
-//new Uint8Array([122,123,123,123,123,124]);
-    let hello = new Uint8Array(array);
+    let hello = new Uint8Array(array2);
     let hello2=new Uint8Array(array4);
     const blob = new Blob([hello], {type: "text/plain;charset=utf-8"});
     const blob2 = new Blob([hello2], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "filecompressed.txt");
-    saveAs(blob2,"Tablecompremidada.txt");
-
-
+    saveAs(blob, "1filecompressed.txt");
+    saveAs(blob2,"0Tablecompremidada.txt");
 }
 
 class Dic {
@@ -333,7 +439,7 @@ class Dic {
         }
         for (let i = 0; i <this.nHash ; i++) {
             let v=this.Dic_[i];
-            for (let j = this.nHash; j <newCapacity ; j++) {
+            for (let j = this.Hashweight; j <newCapacity ; j++) {
                 v.push([]);
             }
         }
