@@ -36,8 +36,96 @@ function bye() {
     let c=convertion_bin(n[0],n[1]);
 show.innerHTML+=c[2];
     show.innerHTML+=c[0]+"<br>"+c[1]+"<br>";
+let j=descompresion_table2(c[1]);
+       let g=  descompresion_file2(c[0],j);
+}
+
+function descompresion_table2(result) {
+    let arr = [];
+    for (let i = 0; i < result.length; i++) {
+        arr.push(String.fromCharCode(result[i]));
+    }
+
+    let ntable = [];
+    let nhash = -1;
+    let nweight = 0;
+    let leight = 0;
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === '|') {
+            ntable.push([]);
+            nhash++;
+        } else {
+            let newhash = [];
+            let th = false;
+            while (arr[i] !== '|'&& i<arr.length) {
+                if (arr[i] === ',') {
+                    leight = newhash.length;
+                    let h = [];
+                    for (let j = 0; j < leight; j++) {
+                        h.push(newhash[j]);
+                    }
+                    ntable[nhash].push(h);
+                    newhash.length = 0;
+                    th = true;
+                } else {
+                    newhash.push(arr[i]);
+                }
+                i++;
+
+            }
+            if (th) {
+                i--;
+            }
+
+
+        }
+
+    }
+    return new Dic(ntable,[],ntable.length,0,'-1',leight);
 
 }
+function descompresion_file2(result,dic) {
+let array=[];
+    for (let i = 0; i <result.length ; i++) {
+     let b=ABC.toBinary( String.fromCharCode(result[i]),0);
+       let b1=b.split('');
+        for (let j = 0; j <b1.length ; j++) {
+            array.push(b1[j]);
+        }
+    }
+    let numbs=0;
+    let arr=[];
+    for (let i = 0; i <array.length ; i++) {
+        if (i!==0 && i%9===0){
+            arr.push(numbs);
+            numbs=0;
+        }
+        if (array[i]==='1'){
+            numbs+=Math.pow(2,8-i%9);
+
+        }
+
+    }
+    let arrx=[];
+    for (let i = 0; i <arr.length ; i++) {
+        if (arr[i]<=255) {
+            arrx.push(String.fromCharCode(arr[i]));
+        }else {
+            let hash=arr[i]-256;
+            let lengh= String.fromCharCode(arr[i+1])-'0';
+            let index= String.fromCharCode(arr[i+2])-'0';
+         let g1= dic.Dic_[hash];
+         let g2=g1[index];
+         i+=2;
+            for (let j = 0; j <lengh ; j++) {
+                arrx.push(g2[j]);
+            }
+        }
+    }
+ return arrx;
+}
+
+
 function convertion_bin(result,j){
     let array=[];
     let array2=[];
