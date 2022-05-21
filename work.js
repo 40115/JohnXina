@@ -155,9 +155,14 @@ j.inicial_lookup(result);
     for (let i = 0; i <result.length ; i++) {
         if (j.Index===undefined){
             h.push("<p>file compressed put the lookup remaining to the file and finished</p>");
-            for (let k = 0; k <j.Look_Up.length && j.Look_Up[k]!==undefined ; k++) {
+         /*   for (let k = 0; k <j.Look_Up.length && j.Look_Up[k]!==undefined ; k++) {
                 file.push(  j.Look_Up[k]);
-            }
+            }*/
+                for (let k = 0; k <j.Look_Up.length && j.Look_Up[k]!==undefined ; k++) {
+                    file.push(  j.Look_Up[k]);
+                }
+
+
             break;
         }
 
@@ -175,6 +180,7 @@ let sa=j.Hash_lookup();
 
         file.push('¨',lengmax.toString(),index.toString(),hash.toString());
             j.move_Index(result,i,lengmax);
+            h.push("<p>push"+lengmax+" to go with the window");
             i=i+lengmax-1;
         h.push("<p> Resulting lookup</p>"+j.Look_Up);
 
@@ -182,7 +188,6 @@ let sa=j.Hash_lookup();
         h.push("<p> Available length Not decteted for compression:"+lengmax+" Index->"+ index+" Hash->" +hash+"</p>");
         h.push("<p> We need to store the lookup to the hash dictonary</p>");
             j.Place_hash(sa,j.Look_Up);
-
         file.push( j.move_Index(result,i,1));
         h.push("<p> Resulting lookup</p>"+j.Look_Up);
 
@@ -403,7 +408,7 @@ class Dic {
     move_Index(nex,i,len){
         let n=this.Look_Up[0];
         let j;
-        for (j = 0; j <this.nLook ; j++) {
+        for (j = 0; j <this.Look_Up.length ; j++) {
             this.Look_Up[j]=nex[i+len+j];
 
         }

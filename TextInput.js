@@ -38,6 +38,7 @@ show.innerHTML+=c[2];
     show.innerHTML+=c[0]+"<br>"+c[1]+"<br>";
 let j=descompresion_table2(c[1]);
        let g=  descompresion_file2(c[0],j);
+       let d12=0;
 }
 
 function descompresion_table2(result) {
