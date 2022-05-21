@@ -1,5 +1,3 @@
-
-
 function bye() {
     let result =document.getElementById("Input").value;
     let show =document.getElementById("Result");
@@ -86,7 +84,7 @@ function descompresion_table2(result) {
 
 }
 function descompresion_file2(result,dic) {
-let array=[];
+    let array=[];
     for (let i = 0; i <result.length ; i++) {
      let b=ABC.toBinary( String.fromCharCode(result[i]),0);
        let b1=b.split('');
@@ -131,14 +129,14 @@ function convertion_bin(result,j){
     let array=[];
     let array2=[];
     let h=[];
-    h.push("<h3>Inciallizaing the writting to binnary and then write the resulting 8 bit number to the file</h3>")
+    h.push("<h3>Initializing the writing to binary and then write the resulting 8 bit number to the file</h3>")
     for (let i = 0; i <result.length ; i++) {
         if (result[i]==='¨'){
-            h.push("<p>Special char found , adding a 1 at the begging to signnel it as speacial later on in the decommpression</p>")
+            h.push("<p>Special char found , adding a 1 at the begging to signal it as special later on in the decompression</p>")
 
             array.push('1');
             let h1=result[i+3]-'0';
-            h.push("<p>the speacial char is actually a neceary waste of space, in 9 bits its 100000000 , we can use the other 8 bits to represent the hash so:"+result[i+3]+" is actually going to be used in the other 8 bits.")
+            h.push("<p>The special char is actually a necessary waste of space, in 9 bits its 100000000, we can use the other 8 bits to represent the hash so:"+result[i+3]+" is actually going to be used in the other 8 bits.")
             for (let k = 0; k <8 ; k++) {
                 if (h1>=Math.pow(2,7-k)){
                     h.push("1")
@@ -154,7 +152,7 @@ function convertion_bin(result,j){
             }
             h.push("<p>Calculated the binary of the number and added it to the compressed file</p>")
         result.splice(i+3,1);
-            h.push("<p>Removed the hash number now irrelavent</p>")
+            h.push("<p>Removed the hash number now irrelevant</p>")
 
         }else {
             h.push("<p>Added the 0 for "+ result[i]+" is litteral sign</p>");
@@ -170,7 +168,7 @@ function convertion_bin(result,j){
         }
     }
     let num=0;
-    h.push("<p>Convertion to numbs for the files</p>");
+    h.push("<p>Conversion to numbs for the files</p>");
 
     for (let i = 0; i <array.length ; i++) {
         if (i%8===0 && i!==0){
@@ -183,7 +181,7 @@ function convertion_bin(result,j){
 
     }
 
-    h.push("<p>Adding the table by sepparing it in | per hash level and , per hashweight</p>")
+    h.push("<p>Adding the table by separating it in | per hash level and , per hashweight</p>")
 
     let array3=[];
     for (let i = 0; i <j.nHash ; i++) {
