@@ -37,8 +37,10 @@ function bye() {
 show.innerHTML+=c[2];
     show.innerHTML+=c[0]+"<br>"+c[1]+"<br>";
 let j=descompresion_table2(c[1]);
-       let g=  descompresion_file2(c[0],j);
-       let d12=0;
+show.innerHTML+=j[1];
+       let g=  descompresion_file2(c[0],j[0]);
+       show.innerHTML+=g[1];
+       show.innerHTML+=g[0];
 }
 
 function descompresion_table2(result) {
@@ -46,13 +48,14 @@ function descompresion_table2(result) {
     for (let i = 0; i < result.length; i++) {
         arr.push(String.fromCharCode(result[i]));
     }
-
+    let h2="<h2>Decompression table </h2>";
     let ntable = [];
     let nhash = -1;
     let nweight = 0;
     let leight = 0;
     for (let i = 0; i < arr.length; i++) {
         if (arr[i] === '|') {
+            h2+="<p> NEW HASH TABLE CREATED</p>"
             ntable.push([]);
             nhash++;
         } else {
@@ -65,11 +68,14 @@ function descompresion_table2(result) {
                     for (let j = 0; j < leight; j++) {
                         h.push(newhash[j]);
                     }
+                    h2+="<p> INSERT NEW HASH VALUE READ <br></p>";
                     ntable[nhash].push(h);
                     newhash.length = 0;
                     th = true;
                 } else {
                     newhash.push(arr[i]);
+                    h2+="<p> INSERTING NEW VALUE FROM ARRAY READ <br>"+arr[i]+"</p>"
+
                 }
                 i++;
 
@@ -82,23 +88,29 @@ function descompresion_table2(result) {
         }
 
     }
-    return new Dic(ntable,[],ntable.length,0,'-1',leight);
+    return [new Dic(ntable,[],ntable.length,0,'-1',leight),h2];
 
 }
 function descompresion_file2(result,dic) {
 let array=[];
+let h="";
     for (let i = 0; i <result.length ; i++) {
-     let b=ABC.toBinary( String.fromCharCode(result[i]),0);
-       let b1=b.split('');
-        for (let j = 0; j <b1.length ; j++) {
+        let b = ABC.toBinary(String.fromCharCode(result[i]), 0);
+        h += "<p>Converting " + result[i] + " to: " + b + " </p><br>";
+        let b1 = b.split('');
+        for (let j = 0; j < b1.length; j++) {
             array.push(b1[j]);
         }
     }
     let numbs=0;
     let arr=[];
+    h+="<p>Converting 8 bits in these case to 9 bits</p><br>";
+
     for (let i = 0; i <array.length ; i++) {
         if (i!==0 && i%9===0){
             arr.push(numbs);
+            h+="Inserting "+numbs+" In array";
+
             numbs=0;
         }
         if (array[i]==='1'){
@@ -107,9 +119,13 @@ let array=[];
         }
 
     }
+    h+="Final convertion array"+arr;
+
     let arrx=[];
     for (let i = 0; i <arr.length ; i++) {
         if (arr[i]<=255) {
+            h+="Not special char superior 256 so its a literal char: "+String.fromCharCode(arr[i]);
+
             arrx.push(String.fromCharCode(arr[i]));
         }else {
             let hash=arr[i]-256;
@@ -117,13 +133,14 @@ let array=[];
             let index= String.fromCharCode(arr[i+2])-'0';
          let g1= dic.Dic_[hash];
          let g2=g1[index];
+            h+="<p>special char superior 256 so its a literal char: "+arr[i]+ " so we subtract it from the 8 bit (256) and find the hash: "+ hash+ " and we can get the index of the hash table because its the next next one:  "+index+"And its lengh because its the next one to the hash: "+lengh+"</p>";
          i+=2;
             for (let j = 0; j <lengh ; j++) {
                 arrx.push(g2[j]);
             }
         }
     }
- return arrx;
+ return [arrx,h];
 }
 
 
