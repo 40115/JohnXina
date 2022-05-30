@@ -66,6 +66,7 @@ function descompresion_file(result){
         return;
     }
     let araay=[];
+    result=result.split('');
     for (let i = 0; i <result.length ; i++) {
 
         let h=ABC.toBinary(result[i],0);
@@ -77,7 +78,7 @@ function descompresion_file(result){
                 araay.push(js[j]);
             }
         }else {
-            for (let j = 0; j < chars.length; j++) {
+            for (let j = 1; j < chars.length; j++) {
                 araay.push(chars[j]);
             }
         }
@@ -95,9 +96,21 @@ function descompresion_file(result){
         }
     }
     for (let i = 0; i <arrr.length ; i++) {
+        if (arrr[i]<=255) {
+            arr2.push(String.fromCharCode(arrr[i]));
+        }else {
+            let hash=arrr[i]-256;
+            let lengh= String.fromCharCode(arrr[i+1])-'0';
+            let index= String.fromCharCode(arrr[i+2])-'0';
+            let g1= table.Dic_[hash];
+            let g2=g1[index];
+            i+=2;
+            for (let j = 0; j <lengh ; j++) {
+                arr2.push(g2[j]);
+            }
+        }
     }
-let n0=0;
-
+    console.log(arr2);
 }
 function descompresion_table(result){
     if (result[0]!=='|'){
@@ -105,7 +118,6 @@ function descompresion_table(result){
     }
     let ntable=[];
     let nhash=-1;
-    let nweight=0;
     let leight=0;
     for (let i = 0; i <result.length ; i++) {
        if (result[i]==='|'){
@@ -144,7 +156,7 @@ return new Dic(ntable,[],ntable.length,0,'-1',leight);
 function f(result,nDic,nLookup,min) {
 
     let j = new Dic([],[],nDic,nLookup,' ',min);
-   //result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
+   result=['0','0','0','0','0','1','0','0','0','2','4','3','2','1','4','0','5','2','2','2','2','3','2','2','2','3'];
     let file=[];
     let h=[];
 
@@ -283,12 +295,12 @@ h1=h1-Math.pow(2,7-k);
     }
     let num=0;
     for (let i = 0; i <array.length ; i++) {
-        if (i%8===0 && i!==0){
+        if (i%7===0 && i!==0){
      array2.push(num);
 num=0;
         }
         if (array[i]!=='0'){
-            num+=Math.pow(2,7-i%8);
+            num+=Math.pow(2,6-i%7);
         }
 
     }
